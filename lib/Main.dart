@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:untitled1/views/ItineraryPage.dart';
 import 'core/theme/app_theme.dart';
 import 'views/HomePage.dart';
+import 'package:untitled1/views/MainPage.dart';
 
 void main() {
   runApp(const MeuApp());
@@ -17,7 +18,7 @@ class MeuApp extends StatelessWidget {
       theme: AppTheme.light,
       darkTheme: AppTheme.dark,
       themeMode: ThemeMode.light,
-      home: ItineraryPage(),
+      home: const MainPage(),
     );
   }
 }

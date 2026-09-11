@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../core/theme/theme_extensions.dart';
+import 'ItineraryPage.dart';
+import 'RoadPage.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -137,51 +139,45 @@ class Category extends StatelessWidget {
             fontWeight: FontWeight.w500,
           ),
         ),
-
         const SizedBox(height: 16),
-
         SizedBox(
           height: 150,
           child: ListView(
             scrollDirection: Axis.horizontal,
-            children: const [
-              CategoryCard(
-                imagePath: 'lib/image/category/trilhas.png',
-                title: 'Trilhas',
+            children: [
+              GestureDetector(
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const RoadPage()),
+                ),
+                child: const CategoryCard(
+                  imagePath: 'lib/image/category/trilhas.png',
+                  title: 'Trilhas',
+                ),
               ),
-
-              SizedBox(width: 10),
-
-              CategoryCard(
+              const SizedBox(width: 10),
+              const CategoryCard(
                 imagePath: 'lib/image/category/cachoeiras.png',
                 title: 'Cachoeiras',
               ),
-
-              SizedBox(width: 10),
-
-              CategoryCard(
+              const SizedBox(width: 10),
+              const CategoryCard(
                 imagePath: 'lib/image/category/museus.png',
                 title: 'Museus',
               ),
-
-              SizedBox(width: 10),
-
-              CategoryCard(
+              const SizedBox(width: 10),
+              const CategoryCard(
                 imagePath: 'lib/image/category/eventos.png',
                 title: 'Eventos',
               ),
-
-              SizedBox(width: 10),
-
-              CategoryCard(
+              const SizedBox(width: 10),
+              const CategoryCard(
                 imagePath: 'lib/image/category/natureza.png',
                 title: 'Natureza',
               ),
-
-              SizedBox(width: 10),
-
-              CategoryCard(
-                imagePath: 'lib/image/category/acao_comunitaria.png' ,
+              const SizedBox(width: 10),
+              const CategoryCard(
+                imagePath: 'lib/image/category/acao_comunitaria.png',
                 title: 'Ação comunitária',
               ),
             ],
@@ -290,11 +286,27 @@ class Attraction extends StatelessWidget {
                     },
                   ];
 
-                  return AttractionCard(
-                    imagePath: attractions[index]['image']!,
-                    title: attractions[index]['title']!,
-                    width: cardWidth,
-                    height: cardHeight,
+                  final title = attractions[index]['title']!;
+
+                  return GestureDetector(
+                    onTap: () {
+                      if (title == 'Tirolesa') {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const ItineraryPage(),
+                          ),
+                        );
+                      }
+                      // TODO: adicionar navegação das demais atrações quando
+                      // as respectivas páginas de itinerário existirem
+                    },
+                    child: AttractionCard(
+                      imagePath: attractions[index]['image']!,
+                      title: title,
+                      width: cardWidth,
+                      height: cardHeight,
+                    ),
                   );
                 },
               ),

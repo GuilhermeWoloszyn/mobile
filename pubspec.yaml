@@ -28,6 +28,9 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  geolocator: ^13.0.0
+  pdfx: ^2.6.0
+  geolocator_android: ^4.6.0
   flutter:
     sdk: flutter
 
@@ -58,9 +61,13 @@ flutter:
   # the material Icons class.
   uses-material-design: true
   assets:
+    - assets/maps/ibirama_tirolesa.pdf
+    - assets/maps/ibirama_tirolesa.geo.json
     - lib/image/category/
     - lib/image/attraction/
     - lib/image/itinerary/
+    - lib/image/icons/
+    - lib/image/trails/
     - lib/image/
 
   # To add assets to your application, add an assets section, like this:

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../core/theme/theme_extensions.dart';
+import '../features/trail_map/presentation/trail_map_page.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -24,12 +25,11 @@ class ItineraryPage extends StatelessWidget {
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
-            children: const [
+            children: [
               Stack(
                 clipBehavior: Clip.none,
-                children: [
+                children: const [
                   ItineraryHeader(),
-
                   Positioned(
                     left: 16,
                     right: 16,
@@ -38,16 +38,11 @@ class ItineraryPage extends StatelessWidget {
                   ),
                 ],
               ),
-
-              SizedBox(height: 62),
-
-              AssessmentStar(),
-
-              PhotoItinerary(),
-
-              DescriptionItinerary(),
-
-              BtnActionItinerary(),
+              const SizedBox(height: 62),
+              const AssessmentStar(),
+              const PhotoItinerary(),
+              const DescriptionItinerary(),
+              const BtnActionItinerary(),
             ],
           ),
         ),
@@ -104,7 +99,6 @@ class ItineraryHeader extends StatelessWidget {
 }
 
 class InfoItinerary extends StatelessWidget {
-
   final List<InfoItem> items;
 
   const InfoItinerary({
@@ -114,7 +108,6 @@ class InfoItinerary extends StatelessWidget {
         icon: Icons.hiking,
         label: 'Trilha',
         value: 'Fácil',
-
       ),
       InfoItem(
         icon: Icons.add_location_rounded,
@@ -141,12 +134,12 @@ class InfoItinerary extends StatelessWidget {
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
-        children: _buildItems(),
+        children: _buildItems(context),
       ),
     );
   }
 
-  List<Widget> _buildItems() {
+  List<Widget> _buildItems(BuildContext context) {
     final widgets = <Widget>[];
 
     for (int i = 0; i < items.length; i++) {
@@ -158,12 +151,29 @@ class InfoItinerary extends StatelessWidget {
         Expanded(
           child: IndividualItem(
             data: items[i],
+            onTap: items[i].label == 'Distância'
+                ? () => _openTrailMap(context)
+                : null,
           ),
         ),
       );
     }
 
     return widgets;
+  }
+
+  void _openTrailMap(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => const TrailMapPage(
+          pdfAsset: 'assets/maps/ibirama_tirolesa.pdf',
+          geoJsonAsset: 'assets/maps/ibirama_tirolesa.geo.json',
+          targetLat: -27.055415566475553,
+          targetLon: -49.52445864230844,
+        ),
+      ),
+    );
   }
 }
 
@@ -183,10 +193,12 @@ class InfoItem {
 
 class IndividualItem extends StatelessWidget {
   final InfoItem data;
+  final VoidCallback? onTap;
 
   const IndividualItem({
     super.key,
     required this.data,
+    this.onTap,
   });
 
   @override
@@ -210,46 +222,48 @@ class IndividualItem extends StatelessWidget {
       }
     }
 
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        if (data.icon != null) ...[
-          Icon(
-            data.icon,
-            color: getIconColor(),
-            size: 28,
-          ),
-          const SizedBox(height: 4),
-        ],
-
-        FittedBox(
-          fit: BoxFit.scaleDown,
-          child: Text(
-            data.label,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: colors.fonteDefault,
-              fontSize: 13,
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(8),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          if (data.icon != null) ...[
+            Icon(
+              data.icon,
+              color: getIconColor(),
+              size: 28,
             ),
-          ),
-        ),
-
-        if (data.value != null) ...[
-          const SizedBox(height: 4),
+            const SizedBox(height: 4),
+          ],
           FittedBox(
             fit: BoxFit.scaleDown,
             child: Text(
-              data.value!,
+              data.label,
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: colors.branco,
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
+                color: colors.fonteDefault,
+                fontSize: 13,
               ),
             ),
           ),
+          if (data.value != null) ...[
+            const SizedBox(height: 4),
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                data.value!,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: colors.branco,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ],
         ],
-      ],
+      ),
     );
   }
 }
@@ -269,7 +283,7 @@ class Divider extends StatelessWidget {
   }
 }
 
-class AssessmentStar extends StatelessWidget{
+class AssessmentStar extends StatelessWidget {
   const AssessmentStar({super.key});
 
   @override
@@ -277,74 +291,50 @@ class AssessmentStar extends StatelessWidget{
     final colors = context.appColors;
 
     return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: Row(
-          children: [
-            Row(
-              children: [
-                Icon(
-                  Icons.star,
-                  color: Colors.amberAccent,
-                  size: 20,
-                ),
-                Icon(
-                  Icons.star,
-                  color: Colors.amberAccent,
-                  size: 20,
-                ),
-                Icon(
-                  Icons.star,
-                  color: Colors.amberAccent,
-                  size: 20,
-                ),
-                Icon(
-                  Icons.star,
-                  color: Colors.amberAccent,
-                  size: 20,
-                ),
-                Icon(
-                  Icons.star,
-                  color: Colors.white,
-                  size: 20,
-                ),
-              ],
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Row(
+        children: [
+          Row(
+            children: const [
+              Icon(Icons.star, color: Colors.amberAccent, size: 20),
+              Icon(Icons.star, color: Colors.amberAccent, size: 20),
+              Icon(Icons.star, color: Colors.amberAccent, size: 20),
+              Icon(Icons.star, color: Colors.amberAccent, size: 20),
+              Icon(Icons.star, color: Colors.white, size: 20),
+            ],
+          ),
+          const SizedBox(width: 10),
+          Text(
+            '4,0 (21)',
+            style: TextStyle(
+              color: colors.fonteDefault,
+              fontWeight: FontWeight.w800,
+              fontSize: 10,
             ),
-
-            SizedBox(width: 10),
-
-            Text(
-              '4,0 (21)',
-              style: TextStyle(
-                color: colors.fonteDefault,
-                fontWeight: FontWeight.w800,
-                fontSize: 10,
-              ),
-            )
-          ],
-        )
+          ),
+        ],
+      ),
     );
   }
 }
 
-class PhotoItinerary extends StatelessWidget{
+class PhotoItinerary extends StatelessWidget {
   const PhotoItinerary({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsetsGeometry.symmetric(horizontal: 16, vertical: 24),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
       child: Row(
         children: [
           Expanded(
             flex: 3,
             child: ImageConf(
-                image: 'lib/image/itinerary/tirolesa_01.jpg',
-                height: 200,
+              image: 'lib/image/itinerary/tirolesa_01.jpg',
+              height: 200,
             ),
           ),
-
           const SizedBox(width: 6),
-
           Expanded(
             flex: 2,
             child: Column(
@@ -353,9 +343,7 @@ class PhotoItinerary extends StatelessWidget{
                   image: 'lib/image/itinerary/tirolesa_02.jpg',
                   height: 97,
                 ),
-
                 SizedBox(height: 6),
-
                 ImageConf(
                   image: 'lib/image/itinerary/tirolesa_03.jpg',
                   height: 97,
@@ -364,12 +352,12 @@ class PhotoItinerary extends StatelessWidget{
             ),
           ),
         ],
-      )
+      ),
     );
   }
 }
 
-class ImageConf extends StatelessWidget{
+class ImageConf extends StatelessWidget {
   final String image;
   final double height;
 
@@ -382,7 +370,7 @@ class ImageConf extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
-      borderRadius: BorderRadiusGeometry.circular(3),
+      borderRadius: BorderRadius.circular(3),
       child: Image.asset(
         image,
         height: height,
@@ -391,57 +379,55 @@ class ImageConf extends StatelessWidget{
       ),
     );
   }
-
 }
 
-class DescriptionItinerary extends StatelessWidget{
+class DescriptionItinerary extends StatelessWidget {
   const DescriptionItinerary({super.key});
 
   @override
   Widget build(BuildContext context) {
     final colors = context.appColors;
 
-    return Padding(padding: EdgeInsets.symmetric(horizontal: 16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Informações',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-                color: colors.fonteDefault
-              ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Informações',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+              color: colors.fonteDefault,
             ),
-
-            SizedBox(height: 18),
-
-            Text(
-              'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas semper nisl ut arcu rhoncus, eu gravida odio varius. Fusce suscipit condimentum rhoncus. Mauris lacinia iaculis urna a congue. Nulla porta metus erat, a pretium orci pulvinar sit amet. Vivamus vel bibendum ante. Nam fermentum nulla mi, id feugiat quam blandit id. Sed ultricies tincidunt viverra. ',
-              textAlign: TextAlign.justify,
-              softWrap: true,
-              style: TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w400,
-                color: colors.fonteDefault,
-              ),
+          ),
+          const SizedBox(height: 18),
+          Text(
+            'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas semper nisl ut arcu rhoncus, eu gravida odio varius. Fusce suscipit condimentum rhoncus. Mauris lacinia iaculis urna a congue. Nulla porta metus erat, a pretium orci pulvinar sit amet. Vivamus vel bibendum ante. Nam fermentum nulla mi, id feugiat quam blandit id. Sed ultricies tincidunt viverra. ',
+            textAlign: TextAlign.justify,
+            softWrap: true,
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w400,
+              color: colors.fonteDefault,
             ),
-          ],
-      )
+          ),
+        ],
+      ),
     );
   }
 }
 
-class BtnActionItinerary extends StatelessWidget{
+class BtnActionItinerary extends StatelessWidget {
   const BtnActionItinerary({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
+        children: const [
           ActionBtn(icon: Icons.favorite_border),
           SizedBox(width: 51),
           ActionBtn(icon: Icons.add),
@@ -451,10 +437,9 @@ class BtnActionItinerary extends StatelessWidget{
       ),
     );
   }
-
 }
 
-class ActionBtn extends StatelessWidget{
+class ActionBtn extends StatelessWidget {
   final IconData icon;
 
   const ActionBtn({
@@ -469,7 +454,7 @@ class ActionBtn extends StatelessWidget{
     return Container(
       width: 44,
       height: 44,
-      decoration:  BoxDecoration(
+      decoration: BoxDecoration(
         color: colors.cinzaPrincipal,
         shape: BoxShape.circle,
       ),
@@ -480,8 +465,6 @@ class ActionBtn extends StatelessWidget{
       ),
     );
   }
-
-
 }
 
 enum InfoIconType {
@@ -491,4 +474,3 @@ enum InfoIconType {
   extremo,
   kids,
 }
-
